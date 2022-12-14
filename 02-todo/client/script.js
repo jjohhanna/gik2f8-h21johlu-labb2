@@ -109,6 +109,8 @@ function validateField(field) {
       break;
     }
   }
+
+
   /* När alla fall sökts igenom sätts här attribut på fältets förra syskon-element, previousElementSibling. 
 
   Det fungerar så att alla element som ligger inom samma element är syskon. I index.html omsluts alla <input>-element av ett <section>-element. I samma <section>-element finns ett <label>-element och ett <p>-element  <p>-elementen ligger innan <input>-elementen, så alla <p>-element är föregående syskon till alla <input>-element - previousSiblingElement. 
@@ -221,6 +223,7 @@ function renderTask({ id, title, description, dueDate }) {
   let html = `
     <li class="select-none mt-2 py-2 border-b border-amber-300">
       <div class="flex items-center">
+      <input type="checkbox" onclick="checkTask()" class="mx-6">
         <h3 class="mb-3 flex-1 text-xl font-bold text-pink-800 uppercase">${title}</h3>
         <div>
           <span>${dueDate}</span>
@@ -262,6 +265,17 @@ function deleteTask(id) {
   });
 }
 
+
+function checkTask (){
+  /* 
+  - Uppdatera fil med ny aktuell lista 
+  - Styla chackad task 
+  */
+  
+  <h3 class="mb-3 flex-1 text-xl font-bold text-pink-800 uppercase">${title}</h3>
+
+  
+}
 /***********************Labb 2 ***********************/
 /* Här skulle det vara lämpligt att skriva den funktion som angivits som eventlyssnare för när någon markerar en uppgift som färdig. Jag pratar alltså om den eventlyssnare som angavs i templatesträngen i renderTask. Det kan t.ex. heta updateTask. 
   
