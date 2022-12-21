@@ -108,15 +108,37 @@ class Api {
   }
 
   /***********************Labb 2 ***********************/
-   /* Read - GET */
+   
+   /*I detta fetch-anrop behövs inga särskilda inställningar. Fetch kan ta bara url:en som parameter också, istället för att man skapar ett helt request-objekt och skickar in det. */
+       // Update / PUT
 
-   Update() {
-    /* I detta fetch-anrop behövs inga särskilda inställningar. Fetch kan ta bara url:en som parameter också, istället för att man skapar ett helt request-objekt och skickar in det. */
-    return fetch(this.url)
-      .then((result) => result.json())
-      .then((data) => data)
+  update(id,data) {
+  //console.log(`Uppdatera task med id ${id}`);
+  /* sicka med body som är ett objekt översatt till json, 
+     objektet ska innehålla egenskapen completed med värde true eller false
+  */
+
+     /* kopiera request från creat, ändra method till put och url till `${this.url}/${id}` nedan 
+     */
+  
+  const JSONData = JSON.stringify(data);
+
+
+    return fetch(`${this.url}/${id}`, {
+      method: "PUT",
+      body: JSONData,
+      headers: {
+        'content-type': 'application/json'
+      }
+
+      })
+      .then((response) => response.json()
+      .then((result) => console.log(result)))
       .catch((err) => console.log(err));
+
   }
+
+
 
   /* Här skulle det vara lämpligt att skriva en metod likt getAll, create och delete anropas från script.js när någon har markerat en uppgift som färdig. Denna metod bör ansvara för att göra en PUT eller PATCH-förfrågan till vårt backend, precis som create-metoden ansvarar för att göra ett POST-anrop. Metoden här ska alltså motsvara Update = PUT/PATCH. En sådan förfrågan görs med hjälp av fetch(). 
   

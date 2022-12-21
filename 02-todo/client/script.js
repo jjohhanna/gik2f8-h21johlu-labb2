@@ -5,7 +5,7 @@ Andra element, såsom t.ex. ett div-element behöver hämtas ur HTML-dokumentet 
 Man skulle behöva skriva const todoList = document.getElemenetById("todoList"), för att hämta det elementet och sedan komma åt det via variabeln todoList. För formulär behöver man inte det steget, utan kan direkt använda todoForm (det id- och name-attribut som vi gav form-elementet), utan att man först skapar variabeln och hämtar form-elementet.
 */
 
-/* På samma sätt kommer man åt alla fält i todoForm via dess name eller id-attribut. Så här kan vi använda title för att nå input-fältet title, som i HTML ser ut såhär: 
+/* På samma sätt kommer man åt alla fält i todoForm via dess name eller id-attribut. Så här kan vi använda title för att nå in                 -fältet title, som i HTML ser ut såhär: 
 <input type="text" id="title" name="title" class="w-full rounded-md border-yellow-500 border-2 focus-within:outline-none focus:border-yellow-600 px-4 py-2" /> 
 
 Nedan används därför todoForm.[fältnamn] för att sätta eventlyssnare på respektive fält i formuläret.*/
@@ -131,14 +131,19 @@ function onSubmit(e) {
   /* Då kan man använda eventets metod preventDefault för att förhindra eventets standardbeteende, där submit-eventets standardbeteende är att ladda om webbsidan.  */
   e.preventDefault();
   /* Ytterligare en koll görs om alla fält är godkända, ifall man varken skrivit i eller lämnat något fält. */
-  if (titleValid && descriptionValid && dueDateValid) {
-    /* Log för att se om man kommit förbi valideringen */
-    console.log('Submit');
 
-    /* Anrop till funktion som har hand om att skicka uppgift till api:et */
-    saveTask();
+    if (titleValid)
+      if (descriptionValid) 
+        if (dueDateValid) {
+          /* Log för att se om man kommit förbi valideringen */
+          console.log('Submit');
+          /* Anrop till funktion som har hand om att skicka uppgift till api:et */
+          saveTask();
+        }
   }
-}
+
+
+
 
 /* Funktion för att ta hand om formulärets data och skicka det till api-klassen. */
 function saveTask() {
@@ -150,6 +155,8 @@ function saveTask() {
     dueDate: todoForm.dueDate.value,
     completed: false
   };
+
+
   /* Ett objekt finns nu som har egenskaper motsvarande hur vi vill att uppgiften ska sparas ner på servern, med tillhörande värden från formulärets fält. */
 
   /* Api-objektet, d.v.s. det vi instansierade utifrån vår egen klass genom att skriva const api = new Api("http://localhost:5000/tasks); en bit upp i koden.*/
@@ -173,7 +180,7 @@ function saveTask() {
 /* En funktion som ansvarar för att skriva ut todo-listan i ett ul-element. */
 function renderList() {
   /* Logg som visar att vi hamnat i render-funktionen */
-  console.log('rendering');
+  console.log('Nu körs rendinglist');
 
   /* Anrop till getAll hos vårt api-objekt. Metoden skapades i Api.js och har hand om READ-förfrågningar mot vårt backend. */
   api.getAll().then((tasks) => {
@@ -190,16 +197,20 @@ function renderList() {
     /* Koll om det finns någonting i tasks och om det är en array med längd större än 0 */
     if (tasks && tasks.length > 0) {
       /* Om tasks är en lista som har längd större än 0 loopas den igenom med forEach. forEach tar, likt then, en callbackfunktion. Callbackfunktionen tar emot namnet på varje enskilt element i arrayen, som i detta fall är ett objekt innehållande en uppgift.  */
+     // sortDone(tasks); // VAD GÖR DENNA? Anropar typ funktionen sortDone
+    //sortDate(tasks);
+      sortDate(tasks);
       tasks.forEach((task) => {
-        /* Om vi bryter ned nedanstående rad får vi något i stil med:
-        1. todoListElement: ul där alla uppgifter ska finnas
-        2. insertAdjacentHTML: DOM-metod som gör att HTML kan läggas till inuti ett element på en given position
-        3. "beforeend": positionen där man vill lägga HTML-koden, i detta fall i slutet av todoListElement, alltså längst ned i listan. 
-        4. renderTask(task) - funktion som returnerar HTML. 
-        5. task (objekt som representerar en uppgift som finns i arrayen) skickas in till renderTask, för att renderTask ska kunna skapa HTML utifrån egenskaper hos uppgifts-objektet. 
-        */
+          /* Om vi bryter ned nedanstående rad får vi något i stil med:
+          1. todoListElement: ul där alla uppgifter ska finnas
+          2. insertAdjacentHTML: DOM-metod som gör att HTML kan läggas till inuti ett element på en given position
+          3. "beforeend": positionen där man vill lägga HTML-koden, i detta fall i slutet av todoListElement, alltså längst ned i listan. 
+          4. renderTask(task) - funktion som returnerar HTML. 
+          5. task (objekt som representerar en uppgift som finns i arrayen) skickas in till renderTask, för att renderTask ska kunna skapa HTML utifrån egenskaper hos uppgifts-objektet. 
+          */
 
-        /* Denna kod körs alltså en gång per element i arrayen tasks, dvs. en  gång för varje uppgiftsobjekt i listan. */
+          /* Denna kod körs alltså en gång per element i arrayen tasks, dvs. en  gång för varje uppgiftsobjekt i listan. */
+          
         todoListElement.insertAdjacentHTML('beforeend', renderTask(task));
       });
     }
@@ -210,7 +221,7 @@ function renderList() {
 Endast en uppgift åt gången kommer att skickas in här, eftersom den anropas inuti en forEach-loop, där uppgifterna loopas igenom i tur och ordning.  */
 
 /* Destructuring används för att endast plocka ut vissa egenskaper hos uppgifts-objektet. Det hade kunnat stå function renderTask(task) {...} här - för det är en hel task som skickas in - men då hade man behövt skriva task.id, task.title osv. på alla ställen där man ville använda dem. Ett trick är alltså att "bryta ut" dessa egenskaper direkt i funktionsdeklarationen istället. Så en hel task skickas in när funktionen anropas uppe i todoListElement.insertAdjacentHTML("beforeend", renderTask(task)), men endast vissa egenskaper ur det task-objektet tas emot här i funktionsdeklarationen. */
-function renderTask({ id, title, description, dueDate }) {
+function renderTask({ id, title, description, dueDate, completed}) {
   /* Baserat på inskickade egenskaper hos task-objektet skapas HTML-kod med styling med hjälp av tailwind-klasser. Detta görs inuti en templatestring  (inom`` för att man ska kunna använda variabler inuti. Dessa skrivs inom ${}) */
 
   /*
@@ -220,17 +231,22 @@ function renderTask({ id, title, description, dueDate }) {
   /* Lite kort om vad HTML-koden innehåller. Det mesta är bara struktur och Tailwind-styling enligt eget tycke och smak. Värd att nämna extra är dock knappen, <button>-elementet, en bit ned. Där finns ett onclick-attribut som kopplar en eventlyssnare till klickeventet. Eventlyssnaren här heter onDelete och den får med sig egenskapen id, som vi fått med oss från task-objektet. Notera här att det går bra att sätta parenteser och skicka in id på detta viset här, men man fick inte sätta parenteser på eventlyssnare när de kopplades med addEventListener (som för formulärfälten högre upp i koden). En stor del av föreläsning 3 rörande funktioner och event förklarar varför man inte får sätta parenteser på callbackfunktioner i JavaScriptkod. 
   
   När eventlyssnaren kopplas till knappen här nedanför, görs det däremot i HTML-kod och inte JavaScript. Man sätter ett HTML-attribut och refererar till eventlyssnarfunktionen istället. Då fungerar det annorlunda och parenteser är tillåtna. */
+
+  const minTest = document.getElementById(id);
+  if (completed == true)
+  html += `text-emerald-800`; 
+
   let html = `
-    <li class="select-none mt-2 py-2 border-b border-amber-300">
+    <li class="select-none mt-2 py-2 border-b border-amber-300"> 
       <div class="flex items-center">
-      <input type="checkbox" onclick="checkTask()" class="mx-6">
-        <h3 class="mb-3 flex-1 text-xl font-bold text-pink-800 uppercase">${title}</h3>
+      <input type="checkbox" ${completed ? "checked" : ""} onchange="updateTaske(${id})" id="${id}" class="mx-6">
+        <h3 class="mb-3 flex-1 text-xl font-bold uppercase text-emerald-800">${title}</h3>
         <div>
           <span>${dueDate}</span>
           <button onclick="deleteTask(${id})" class="inline-block bg-amber-500 text-xs text-amber-900 border border-white px-3 py-1 rounded-md ml-2">Ta bort</button>
         </div>
       </div>`;
-
+ 
   /* Här har templatesträngen avslutats tillfälligt för att jag bara vill skriva ut kommande del av koden om description faktiskt finns */
 
   description &&
@@ -239,7 +255,7 @@ function renderTask({ id, title, description, dueDate }) {
     /* Det som ska göras om description finns är att html-variabeln ska byggas på med HTML-kod som visar det som finns i description-egenskapen hos task-objektet. */
     (html += `
       <p class="ml-8 mt-2 text-xs italic">${description}</p>
-  `);
+      `);
 
   /* När html-strängen eventuellt har byggts på med HTML-kod för description-egenskapen läggs till sist en sträng motsvarande sluttaggen för <li>-elementet dit. */
   html += `
@@ -263,20 +279,53 @@ function deleteTask(id) {
     renderList();
     /* Notera att parametern result används aldrig i denna funktion. Vi skickar inte tillbaka någon data från servern vid DELETE-förfrågningar, men denna funktion körs när hela anropet är färdigt så det är fortfarande ett bra ställe att rendera om listan, eftersom vi här i callbackfunktionen till then() vet att den asynkrona funktionen remove har körts färdigt. */
   });
+ 
 }
 
-
-function checkTask (){
-  /* 
-  - Uppdatera fil med ny aktuell lista 
-  - Styla chackad task 
-  */
-  
-  <h3 class="mb-3 flex-1 text-xl font-bold text-pink-800 uppercase">${title}</h3>
-
-  
-}
 /***********************Labb 2 ***********************/
+  /* 
+      skapa ett obejkt som har en egenskap som heter completed och har värdet input.ckeckted
+      
+      Sicka objektet och id till api.update
+    */
+
+  function updateTaske(id) {  
+       
+    const completed = document.getElementById(id); //hämtar id för ett objekt
+    console.log(completed.checked); // visar i konsolen: true = checked, false = unchecked
+
+    if(completed.checked == true){
+      const checked = {"completed": true};
+      api.update(id, checked) /* Skickar objektet och id till api.update  */
+      .then((result) => renderList()
+      );
+    }
+    
+    else if (completed.checked == false){
+      const unchecked = {"completed": false};
+      api.update(id, unchecked) /* Skickar objektet och id till api.update  */
+      .then((result) => renderList()
+      );
+    }
+  }
+
+
+  function sortDate(tasks) {
+    // Sortera Arrayen genom datum(newDate)  
+    tasks.sort((newDate, anothersDate) => {
+      console.log(newDate.dueDate)
+      if (newDate.dueDate < anothersDate.dueDate){
+        return -1;
+      }
+      else if (newDate.dueDate > anothersDate.dueDate){
+        return 1;
+      }
+      else {
+        return 0;
+      }
+    });
+  }
+
 /* Här skulle det vara lämpligt att skriva den funktion som angivits som eventlyssnare för när någon markerar en uppgift som färdig. Jag pratar alltså om den eventlyssnare som angavs i templatesträngen i renderTask. Det kan t.ex. heta updateTask. 
   
 Funktionen bör ta emot ett id som skickas från <li>-elementet.
@@ -297,4 +346,7 @@ Om du hittar något annat sätt som funkar för dig, använd för all del det, s
 /***********************Labb 2 ***********************/
 
 /* Slutligen. renderList anropas också direkt, så att listan visas när man först kommer in på webbsidan.  */
-renderList();
+
+  renderList();
+
+
