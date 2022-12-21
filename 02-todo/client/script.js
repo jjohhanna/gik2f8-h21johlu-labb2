@@ -136,7 +136,7 @@ function onSubmit(e) {
       if (descriptionValid) 
         if (dueDateValid) {
           /* Log för att se om man kommit förbi valideringen */
-          console.log('Submit');
+          //console.log('Submit');
           /* Anrop till funktion som har hand om att skicka uppgift till api:et */
           saveTask();
         }
@@ -180,7 +180,7 @@ function saveTask() {
 /* En funktion som ansvarar för att skriva ut todo-listan i ett ul-element. */
 function renderList() {
   /* Logg som visar att vi hamnat i render-funktionen */
-  console.log('Nu körs rendinglist');
+  //console.log('Nu körs rendinglist');
 
   /* Anrop till getAll hos vårt api-objekt. Metoden skapades i Api.js och har hand om READ-förfrågningar mot vårt backend. */
   api.getAll().then((tasks) => {
@@ -200,6 +200,7 @@ function renderList() {
      // sortDone(tasks); // VAD GÖR DENNA? Anropar typ funktionen sortDone
     //sortDate(tasks);
       sortDate(tasks);
+      //changeColor(tasks);
       tasks.forEach((task) => {
           /* Om vi bryter ned nedanstående rad får vi något i stil med:
           1. todoListElement: ul där alla uppgifter ska finnas
@@ -232,18 +233,25 @@ function renderTask({ id, title, description, dueDate, completed}) {
   
   När eventlyssnaren kopplas till knappen här nedanför, görs det däremot i HTML-kod och inte JavaScript. Man sätter ett HTML-attribut och refererar till eventlyssnarfunktionen istället. Då fungerar det annorlunda och parenteser är tillåtna. */
 
-  const minTest = document.getElementById(id);
-  if (completed == true)
-  html += `text-emerald-800`; 
+  // const minTest = document.getElementById(id);
+/*   if (completed == true)
+  html += `text-emerald-800`;  */
+  //const taskStatus = completed == true ? "checked" : "";
+ 
+  //const taskDone 
+  //if completed.checked == true ? "text-emerald-800" : "";
+
+  const taskColor = completed == true ? "text-emerald-600" : "text-stone-600";
+  //om compleeted är true blir texten grön, annars blir textenfärgen röd. 
 
   let html = `
-    <li class="select-none mt-2 py-2 border-b border-amber-300"> 
+    <li class="select-none mt-2 py-2 ${taskColor}"> 
       <div class="flex items-center">
       <input type="checkbox" ${completed ? "checked" : ""} onchange="updateTaske(${id})" id="${id}" class="mx-6">
-        <h3 class="mb-3 flex-1 text-xl font-bold uppercase text-emerald-800">${title}</h3>
+        <h3 class="mb-3 flex-1 text-xl font-bold uppercase ">${title}</h3>
         <div>
           <span>${dueDate}</span>
-          <button onclick="deleteTask(${id})" class="inline-block bg-amber-500 text-xs text-amber-900 border border-white px-3 py-1 rounded-md ml-2">Ta bort</button>
+          <button onclick="deleteTask(${id})" class="inline-block bg-stone-600 text-xs text-white border border-stone-600 hover:bg-white hover:text-stone-600 px-3 py-1 rounded-full ml-2">Ta bort</button>
         </div>
       </div>`;
  
@@ -254,7 +262,7 @@ function renderTask({ id, title, description, dueDate, completed}) {
 
     /* Det som ska göras om description finns är att html-variabeln ska byggas på med HTML-kod som visar det som finns i description-egenskapen hos task-objektet. */
     (html += `
-      <p class="ml-8 mt-2 text-xs italic">${description}</p>
+      <p class="ml-8 mt-2 text-xs italic px-5">${description}</p>
       `);
 
   /* När html-strängen eventuellt har byggts på med HTML-kod för description-egenskapen läggs till sist en sträng motsvarande sluttaggen för <li>-elementet dit. */
@@ -289,10 +297,10 @@ function deleteTask(id) {
       Sicka objektet och id till api.update
     */
 
-  function updateTaske(id) {  
+  function updateTaske(id,tasks) {  
        
     const completed = document.getElementById(id); //hämtar id för ett objekt
-    console.log(completed.checked); // visar i konsolen: true = checked, false = unchecked
+    console.log(completed.checked); // visar i konsolen: true = checked, false = unchecked 
 
     if(completed.checked == true){
       const checked = {"completed": true};
@@ -313,7 +321,7 @@ function deleteTask(id) {
   function sortDate(tasks) {
     // Sortera Arrayen genom datum(newDate)  
     tasks.sort((newDate, anothersDate) => {
-      console.log(newDate.dueDate)
+      //console.log(newDate.dueDate)
       if (newDate.dueDate < anothersDate.dueDate){
         return -1;
       }

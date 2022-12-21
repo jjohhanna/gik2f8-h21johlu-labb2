@@ -30,7 +30,7 @@ class Api {
     /* Konverterar inskickat JavaScriptobjekt, i detta fall är det en uppgift, till en sträng så att den kan skickas över HTTP. */
     const JSONData = JSON.stringify(data);
     /* Utskrift till logg för att se vad som ska skickas och vart det ska skickas */
-    console.log(`Sending ${JSONData} to ${this.url}`);
+    //console.log(`Sending ${JSONData} to ${this.url}`);
 
     /* Nedan skapas ett requestobjekt. Requestobjekt finns inbyggda i JavaScript tack vare JavaScripts fetch API. 
 
@@ -123,8 +123,7 @@ class Api {
   
   const JSONData = JSON.stringify(data);
 
-
-    return fetch(`${this.url}/${id}`, {
+    return fetch(`${this.url}/${id}`, { // id läggs till på slutet i url:en för att ge en personlig url till just den tasken
       method: "PUT",
       body: JSONData,
       headers: {
@@ -135,7 +134,6 @@ class Api {
       .then((response) => response.json()
       .then((result) => console.log(result)))
       .catch((err) => console.log(err));
-
   }
 
 
