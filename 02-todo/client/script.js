@@ -251,7 +251,7 @@ function renderTask({ id, title, description, dueDate, completed}) {
         <h3 class="mb-3 flex-1 text-xl font-bold uppercase ">${title}</h3>
         <div>
           <span>${dueDate}</span>
-          <button onclick="deleteTask(${id})" class="inline-block bg-stone-600 text-xs text-white border border-stone-600 hover:bg-white hover:text-stone-600 px-3 py-1 rounded-full ml-2">Ta bort</button>
+          <button onclick="deleteTask(${id})" class="inline-block bg-stone-500 text-xs text-white hover:bg-white hover:text-emerald-600 px-3 py-1 rounded-full ml-2">Ta bort</button>
         </div>
       </div>`;
  
